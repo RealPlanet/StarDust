@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackageOutputPath>$(OutputPath)</PackageOutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<Platforms>x64;x86</Platforms>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="build-intermediate\**" />
+		<Compile Remove="build\**" />
+		<EmbeddedResource Remove="build-intermediate\**" />
+		<EmbeddedResource Remove="build\**" />
+		<None Remove="build-intermediate\**" />
+		<None Remove="build\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\StarDust.EmitterW\StarDust.EmitterW.vcxproj" />
+		<ProjectReference Include="..\StarDust.InterpreterW\StarDust.InterpreterW.vcxproj" />
+		<ProjectReference Include="..\StarDust.SharedW\StarDust.SharedW.vcxproj" />
+		<ProjectReference Include="..\StarDust\StarDust.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="sample.sds">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="sample_plain.sdc">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="call postbuild.bat $(OutDir)" />
+	</Target>
+
+</Project>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "StarDust.Compiler": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

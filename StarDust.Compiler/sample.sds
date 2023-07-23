@@ -1,0 +1,75 @@
+// THIS IS A COMMENT AVOID
+
+.method void Main()
+{
+	.entrypoint
+	L_0000: nop
+	L_0001: ldc.i4 1
+	L_0002: call pTopStackVal
+	L_0003: call print_a_bunch thread 
+	L_0004: ldc.i4 1
+	L_0005: call pTopStackVal
+	L_0006: ldc.i4 2
+	L_0007: ldc.i4 2
+	L_0008: call add thread
+	L_0009: ldc.i4 666
+	L_000A: ret
+}
+
+.method void print_a_bunch()
+{
+	L_0000: ldc.i4 0
+	L_0001: call pTopStackVal
+	L_0002: ldc.i4 0
+	L_0003: call pTopStackVal
+	L_0004: ldc.i4 0
+	L_0005: call pTopStackVal
+	L_0006: ldc.i4 0
+	L_0007: ret
+}
+
+.method int32 add(int32 a, int32 b )
+{
+	L_0000: ldarg 0
+	L_0001: ldarg 1
+	L_0002: add
+	L_0003: call pTopStackVal
+	L_0004: ldc.i4 0
+	L_0005: ret
+}
+
+//.method int Sum()
+//{
+//	.locals(
+//		int x,
+//		int y
+//	)
+//	
+//	L_0000: ldloc 0
+//	L_0001: ldloc 1
+//	add
+//	ret
+//}
+
+// THIS IS A COMMENT AVOID
+
+//.method void Main()
+//{
+//    .entrypoint             // This is the program entrypoint
+//    .locals (               // Defines all the local variables used in this function
+//        [0] int32 num )      // Int32 variable named num
+//    L_0000: ldc.i4.0        // Push constant 0 onto stack
+//    L_0001: stloc.0         // Pops value from stack and moves it into local var at index 0
+//    L_0002: br.s L_000e     // Jump (unconditionally) to instruction L_000e
+//    L_0004: ldloc.0         // Push local value onto stack
+//    L_0005: call void [mscorlib]System.Console::WriteLine(int32)
+//    L_000a: ldloc.0         // push local at index 0 on stack
+//    L_000b: ldc.i4.1        //  push 1 onto stack
+//    L_000c: add             // pop last two values, add them, push result
+//    L_000d: stloc.0         // pop and store value in local at index 0
+//    L_000e: ldloc.0         // Push value from local 0 into stack
+//    L_000f: ldc.i4.s 10     // Push value 10 into stack
+//    L_0011: blt.s L_0004    // Pop last two values form stack, If val1 is less than val2 then jump to L_0004
+//    L_0013: ret             // Return, leave program
+//}
+

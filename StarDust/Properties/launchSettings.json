@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "StarDust": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

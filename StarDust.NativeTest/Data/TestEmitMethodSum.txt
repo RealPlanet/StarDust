@@ -1,0 +1,8 @@
+.method void Main()
+{
+    L_0000 : ldc.i4 3
+    L_0001 : ldc.i4 2
+    L_0002 : add
+    L_0003 : ret
+}
+
