@@ -3,6 +3,8 @@
 #ifndef _SDVM_STR_UTILITY_H_
 #define _SDVM_STR_UTILITY_H_
 #include <string>
+#include <memory>
+#include <stdexcept>
 
 namespace sdu
 {

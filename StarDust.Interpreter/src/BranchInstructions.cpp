@@ -66,11 +66,13 @@ namespace sdi
 
 	int BranchEqualsVariant::execute(ExecutionScope* scope)
 	{
-		DataStack& dataStack = scope->get_data_stack();
-		StackValue second = dataStack.pop();
-		StackValue first = dataStack.pop();
+		DataStack* dataStack = scope->get_data_stack();
+		StackValue val1, val2;
+		scope->get_data_stack()->pop_into(val1);
+		scope->get_data_stack()->pop_into(val2);
 
-		if (first == second)
+
+		if (val1 == val2)
 			scope->set_label_number(this->theTargetLabel);
 
 		return 0;
@@ -79,11 +81,13 @@ namespace sdi
 
 	int BranchNotEqualsVariant::execute(ExecutionScope* scope)
 	{
-		DataStack& dataStack = scope->get_data_stack();
-		StackValue second = dataStack.pop();
-		StackValue first = dataStack.pop();
+		DataStack* dataStack = scope->get_data_stack();
+		StackValue val1, val2;
+		scope->get_data_stack()->pop_into(val1);
+		scope->get_data_stack()->pop_into(val2);
 
-		if (first != second)
+
+		if (val1 != val2)
 			scope->set_label_number(this->theTargetLabel);
 
 		return 0;
@@ -91,11 +95,13 @@ namespace sdi
 
 	int BranchLessThanVariant::execute(ExecutionScope* scope)
 	{
-		DataStack& dataStack = scope->get_data_stack();
-		StackValue second = dataStack.pop();
-		StackValue first = dataStack.pop();
+		DataStack* dataStack = scope->get_data_stack();
+		StackValue val1, val2;
+		scope->get_data_stack()->pop_into(val1);
+		scope->get_data_stack()->pop_into(val2);
 
-		if (first < second)
+
+		if (val1 < val2)
 			scope->set_label_number(this->theTargetLabel);
 
 		return 0;
@@ -103,11 +109,13 @@ namespace sdi
 
 	int BranchLessThanOrEqualVariant::execute(ExecutionScope* scope)
 	{
-		DataStack& dataStack = scope->get_data_stack();
-		StackValue second = dataStack.pop();
-		StackValue first = dataStack.pop();
+		DataStack* dataStack = scope->get_data_stack();
+		StackValue val1, val2;
+		scope->get_data_stack()->pop_into(val1);
+		scope->get_data_stack()->pop_into(val2);
 
-		if (first <= second)
+
+		if (val1 <= val2)
 			scope->set_label_number(this->theTargetLabel);
 
 		return 0;
@@ -115,11 +123,13 @@ namespace sdi
 
 	int BranchGreaterThanVariant::execute(ExecutionScope* scope)
 	{
-		DataStack& dataStack = scope->get_data_stack();
-		StackValue second = dataStack.pop();
-		StackValue first = dataStack.pop();
+		DataStack* dataStack = scope->get_data_stack();
+		StackValue val1, val2;
+		scope->get_data_stack()->pop_into(val1);
+		scope->get_data_stack()->pop_into(val2);
 
-		if (first > second)
+
+		if (val1 > val2)
 			scope->set_label_number(this->theTargetLabel);
 
 		return 0;
@@ -127,11 +137,13 @@ namespace sdi
 
 	int BranchGreaterThanOrEqualVariant::execute(ExecutionScope* scope)
 	{
-		DataStack& dataStack = scope->get_data_stack();
-		StackValue second = dataStack.pop();
-		StackValue first = dataStack.pop();
-	
-		if (first >= second)
+		DataStack* dataStack = scope->get_data_stack();
+		StackValue val1, val2;
+		scope->get_data_stack()->pop_into(val1);
+		scope->get_data_stack()->pop_into(val2);
+
+
+		if (val1 >= val2)
 			scope->set_label_number(this->theTargetLabel);
 
 		return 0;

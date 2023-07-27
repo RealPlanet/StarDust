@@ -13,10 +13,13 @@
 	<ItemGroup>
 		<Compile Remove="build-intermediate\**" />
 		<Compile Remove="build\**" />
+		<Compile Remove="obj\**" />
 		<EmbeddedResource Remove="build-intermediate\**" />
 		<EmbeddedResource Remove="build\**" />
+		<EmbeddedResource Remove="obj\**" />
 		<None Remove="build-intermediate\**" />
 		<None Remove="build\**" />
+		<None Remove="obj\**" />
 	</ItemGroup>
 
 	<ItemGroup>

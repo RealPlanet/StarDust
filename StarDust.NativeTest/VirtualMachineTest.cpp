@@ -1,14 +1,19 @@
-#include "pch.h"
 #include "CppUnitTest.h"
 
-#include "SDEmitter.h"
+#include "ModuleEmitter.h"
+#include "MethodEmitter.h"
+
+#include "Argument.h"
+
 #include "TestUtilities.h"
 #include "Opcodes.h"
 #include "RuntimeInstructionBinder.h"
 #include "ExecutionScope.h"
 #include "Logger.h"
+
 #include <VirtualMachine.h>
 #include <BytecodeParser.h>
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace StarDustNativeTest
@@ -27,7 +32,11 @@ namespace StarDustNativeTest
 
 		static void printVal(sdi::ExecutionScope* scope)
 		{
-			sdi::StackValue val = scope->get_data_stack().pop();
+			// MOVE CONSTRUCTOR BREAKS MEMORY
+			//sdi::StackValue val;
+			//scope->get_data_stack()->pop(val);
+			sdi::StackValue val = scope->get_data_stack()->pop();
+
 			Assert::AreNotEqual((int)sdi::StackDataType::Err, (int)val.tag);
 			std::string str;
 			switch (val.tag)
@@ -56,9 +65,11 @@ namespace StarDustNativeTest
 		}
 
 		static void appen_std_return(sde::MethodEmitter* method) {
-			std::vector<std::string> arguments{ "0" };
-			method->append_opcode(sde::Opcode::LoadConstantI32, &arguments);
-			method->append_opcode(sde::Opcode::Return, nullptr);
+			sde::Arguments arguments;
+			arguments.push_back("0");
+
+			method->add_opcode(sde::Opcode::LoadConstantI32, arguments);
+			method->add_opcode(sde::Opcode::Return);
 		}
 	public:
 		TEST_CLASS_INITIALIZE(emit_test_script)
@@ -82,19 +93,19 @@ namespace StarDustNativeTest
 			Logger::WriteMessage(" ** Begin test! **\n");
 
 			const char* scriptName = "Entrypoint testing";
-			sde::SDEmitter emitter(scriptName, strlen(scriptName));
+			sde::ModuleEmitter emitter(scriptName, strlen(scriptName));
 
-			sde::MethodEmitter* method = emitter.emit_method("Main", 4);
-			std::vector<std::string> arguments{ "doAck" };
+			sde::MethodEmitter* method = emitter.add_method("Main");
+			sde::Arguments arguments{ "doAck" };
 
-			method->add_attribute(sde::Attribute::EntryPoint, nullptr)
-				->append_opcode(sde::Opcode::Call, &arguments);
+			method->add_attribute(sde::AttributeCode::EntryPoint)
+				->add_opcode(sde::Opcode::Call, arguments);
 
 			appen_std_return(method);
 
 			sdi::VirtualMachine vm;
 			std::stringstream ss;
-			emitter.generate(&ss);
+			emitter.write(&ss);
 
 			sdi::BytecodeParser parser;
 			sdi::BytecodeFilePtr bytecodePtr = sdi::BytecodeFile::froms(ss.str());
@@ -120,29 +131,29 @@ namespace StarDustNativeTest
 			//	nop
 
 			const char* scriptName = "Branch testing";
-			sde::SDEmitter emitter(scriptName, strlen(scriptName));
+			sde::ModuleEmitter emitter(scriptName, strlen(scriptName));
 
-			sde::MethodEmitter* method = emitter.emit_method("Main", 4);
-			std::vector<std::string> const1{ "1" };
-			std::vector<std::string> const2{ "2" };
-			std::vector<std::string> labelIfTrue{ "L_0004" };
-			std::vector<std::string> labelIfSkipExit{ "L_0005" };
-			std::vector<std::string> callArgs{ "doAck" };
+			sde::MethodEmitter* method = emitter.add_method("Main");
+			sde::Arguments const1{ "1" };
+			sde::Arguments const2{ "2" };
+			sde::Arguments labelIfTrue{ "L_0004" };
+			sde::Arguments labelIfSkipExit{ "L_0005" };
+			sde::Arguments callArgs{ "doAck" };
 
-			method->add_attribute(sde::Attribute::EntryPoint, nullptr)
-				->append_opcode(sde::Opcode::LoadConstantI32, &const1) // 0
-				->append_opcode(sde::Opcode::LoadConstantI32, &const2) // 1
-				->append_opcode(sde::Opcode::BranchEquals, &labelIfTrue) // 2
-				->append_opcode(sde::Opcode::UnconditionalJump, &labelIfSkipExit) //3
-				->append_opcode(sde::Opcode::Call, &callArgs) // 4
-				->append_opcode(sde::Opcode::NoOperation, nullptr)		// 5
-				->append_opcode(sde::Opcode::NoOperation, nullptr);		// 6;
+			method->add_attribute(sde::AttributeCode::EntryPoint)
+				->add_opcode(sde::Opcode::LoadConstantI32, const1) // 0
+				->add_opcode(sde::Opcode::LoadConstantI32, const2) // 1
+				->add_opcode(sde::Opcode::BranchEquals, labelIfTrue) // 2
+				->add_opcode(sde::Opcode::UnconditionalJump, labelIfSkipExit) //3
+				->add_opcode(sde::Opcode::Call, callArgs) // 4
+				->add_opcode(sde::Opcode::NoOperation)		// 5
+				->add_opcode(sde::Opcode::NoOperation);		// 6;
 
 			appen_std_return(method);
 
 			sdi::VirtualMachine vm;
 			std::stringstream ss;
-			emitter.generate(&ss);
+			emitter.write(&ss);
 
 			sdi::BytecodeParser parser;
 			sdi::BytecodeFilePtr bytecodePtr = sdi::BytecodeFile::froms(ss.str());
@@ -160,24 +171,24 @@ namespace StarDustNativeTest
 			Logger::WriteMessage(" ** Begin test! **\n");
 
 			const char* scriptName = "Branch testing";
-			sde::SDEmitter emitter(scriptName, strlen(scriptName));
-			sde::MethodEmitter* method = emitter.emit_method("Main", 4);
+			sde::ModuleEmitter emitter(scriptName, strlen(scriptName));
+			sde::MethodEmitter* method = emitter.add_method("Main");
 
-			std::vector<std::string> callArgs{ "print" };
-			std::vector<std::string> str1{ "Deez" };
-			std::vector<std::string> str2{ "Nuts" };
+			sde::Arguments callArgs{ "print" };
+			sde::Arguments str1{ "Deez" };
+			sde::Arguments str2{ "Nuts" };
 
-			method->add_attribute(sde::Attribute::EntryPoint, nullptr)
-				->append_opcode(sde::Opcode::LoadString, &str1)
-				->append_opcode(sde::Opcode::Call, &callArgs)
-				->append_opcode(sde::Opcode::LoadString, &str2)
-				->append_opcode(sde::Opcode::Call, &callArgs)
-				->append_opcode(sde::Opcode::NoOperation, nullptr);
+			method->add_attribute(sde::AttributeCode::EntryPoint)
+				->add_opcode(sde::Opcode::LoadString, str1)
+				->add_opcode(sde::Opcode::Call, callArgs)
+				->add_opcode(sde::Opcode::LoadString, str2)
+				->add_opcode(sde::Opcode::Call, callArgs)
+				->add_opcode(sde::Opcode::NoOperation);
 
 			appen_std_return(method);
 
 			std::stringstream ss;
-			emitter.generate(&ss);
+			emitter.write(&ss);
 
 			Logger::WriteMessage(ss.str().c_str());
 

@@ -16,4 +16,10 @@
 #define _SDVM_THROW_IF(cond) if(cond) throw std::runtime_error("Conditional assert failed!")
 #define _SDVM_THROW_IF_W_ERR(cond, s) if(cond) throw std::runtime_error(s)
 #define _SDVM_GENERIC_NEWLINE '\n'
+
+#define FOREACH(var, vec, body)\
+	for(size_t x{0}; x < vec.size(); x++){\
+		var = vec.at(x);\
+		body}\
+
 #endif

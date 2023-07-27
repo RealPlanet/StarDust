@@ -39,10 +39,10 @@ namespace sdi
 	}
 
 	typedef union {
-		bool		 b;
-		char32_t	 c;
-		int32_t		 i;
-		float_t		 f;
+		bool			b;
+		char32_t		c;
+		int32_t			i;
+		float_t			f;
 		const char* s;
 	} Value;
 
@@ -50,21 +50,28 @@ namespace sdi
 	{
 	public:
 		_SDVM_API ~StackValue();
-		_SDVM_API StackValue() : tag { StackDataType::Err } {}
-		_SDVM_API StackValue(bool v)		: value{ create_value(v)}, tag{StackDataType::Bool} {}
-		_SDVM_API StackValue(char32_t v)	: value{ create_value(v)}, tag{StackDataType::Char} {}
-		_SDVM_API StackValue(int32_t v)		: value{ create_value(v)}, tag{StackDataType::Int32} {}
-		_SDVM_API StackValue(float_t v)		: value{ create_value(v)}, tag{StackDataType::Float} {}
-		_SDVM_API StackValue(std::string v) : value{ create_value(v)}, tag{StackDataType::String} {}
+		_SDVM_API StackValue()					: tag{ StackDataType::Err } {}
+		_SDVM_API StackValue(bool v)			: value{ create_value(v) }, tag{ StackDataType::Bool } {}
+		_SDVM_API StackValue(char32_t v)		: value{ create_value(v) }, tag{ StackDataType::Char } {}
+		_SDVM_API StackValue(int32_t v)			: value{ create_value(v) }, tag{ StackDataType::Int32 } {}
+		_SDVM_API StackValue(float_t v)			: value{ create_value(v) }, tag{ StackDataType::Float } {}
+		_SDVM_API StackValue(std::string v)		: value{ create_value(v) }, tag{ StackDataType::String } {}
 		_SDVM_API StackValue(StackValue&& o) noexcept;
 		_SDVM_API StackValue(const StackValue& o);
 
-		bool is_valid()			const { return tag != StackDataType::Err; }
+		bool is_valid()			const
+		{
+			if (tag == StackDataType::String)
+				return value.s != nullptr;
+
+			return tag != StackDataType::Err;
+		}
+
 		bool is_bool()			const { return tag == StackDataType::Bool; }
 		bool is_char()			const { return tag == StackDataType::Char; }
 		bool is_int32()			const { return tag == StackDataType::Int32; }
 		bool is_float()			const { return tag == StackDataType::Float; }
-		bool is_string()		const { return tag == StackDataType::String; }
+		bool is_string()		const { return tag == StackDataType::String && value.s != nullptr; }
 
 		bool		as_bool()	const { assert_stackvalue; return value.b; }
 		char32_t	as_char()	const { assert_stackvalue; return value.c; }
@@ -76,10 +83,9 @@ namespace sdi
 		Value value = { 0 };
 		StackDataType tag = StackDataType::Err;
 
-		StackValue operator=(const StackValue& o)
-		{
-			return StackValue(o);
-		}
+		void copy_memory_if_needed(const StackValue* from, StackValue* to);
+		_SDVM_API StackValue& operator=(const StackValue& o);
+
 #pragma region
 		bool operator==(const StackValue& o)
 		{
@@ -136,13 +142,12 @@ namespace sdi
 #pragma endregion Operators
 
 	private:
-		Value create_value(bool val)		{ Value v; v.b = val; return v; }
-		Value create_value(char32_t val)	{ Value v; v.c = val; return v; }
-		Value create_value(int32_t val)		{ Value v; v.i = val; return v; }
-		Value create_value(float_t val)		{ Value v; v.f = val; return v; }
-		Value create_value(std::string str) { return create_value(str.c_str(), (int)str.length() + 1); }
+		Value create_value(bool val) { Value v; v.b = val; return v; }
+		Value create_value(char32_t val) { Value v; v.c = val; return v; }
+		Value create_value(int32_t val) { Value v; v.i = val; return v; }
+		Value create_value(float_t val) { Value v; v.f = val; return v; }
+		Value create_value(std::string str) { return create_value(str.c_str(), (int)str.length()); }
 		Value create_value(const char* str, int len);
-
 	};
 
 	class DataStack
@@ -154,14 +159,27 @@ namespace sdi
 		StackValue& top() { return m_Stack.top(); }
 		size_t		size() { return m_Stack.size(); }
 
-		void		push(StackValue& val)		{ m_Stack.push(val);	 }
-		void		push(int32_t val)			{ m_Stack.push(StackValue(val)); }
-		void		push(float_t val)			{ m_Stack.push(StackValue(val)); }
-		void		push(char32_t val)			{ m_Stack.push(StackValue(val)); }
-		void		push(bool val)				{ m_Stack.push(StackValue(val)); }
-		void		push(std::string& val)		{ m_Stack.push(StackValue(val)); }
+		void		push(const StackValue& val) { m_Stack.emplace(val); }
+		void		push(int32_t val) { m_Stack.emplace(val); }
+		void		push(float_t val) { m_Stack.emplace(val); }
+		void		push(char32_t val) { m_Stack.emplace(val); }
+		void		push(bool val) { m_Stack.emplace(val); }
+		void		push(const std::string& val) { m_Stack.emplace(val); }
 
-		StackValue pop() { StackValue val = top(); m_Stack.pop(); return val; }
+		void pop_into(StackValue& dest)
+		{
+			StackValue val = top();
+			dest = val;
+
+			m_Stack.pop();
+		}
+
+		StackValue pop()
+		{
+			StackValue val = top();
+			m_Stack.pop();
+			return val;
+		}
 	};
 
 #pragma region

@@ -19,7 +19,7 @@ namespace sdi
 
     int LoadLocalVariant::execute(ExecutionScope* scope)
     {
-        scope->get_data_stack().push(scope->get_locals().at(theLocalIndex));
+        scope->get_data_stack()->push(scope->get_locals().at(theLocalIndex));
         return 0;
     }
 
@@ -36,7 +36,9 @@ namespace sdi
 
     int StoreLocalVariant::execute(ExecutionScope* scope)
     {
-        StackValue val = scope->get_data_stack().pop();
+        StackValue val;
+        scope->get_data_stack()->pop_into(val);
+
         std::vector<StackValue>& v = scope->get_arguments();
         v.emplace(v.begin() + theLocalIndex, val);
         return 0;

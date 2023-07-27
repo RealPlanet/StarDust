@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "TestUtilities.h"
 
 std::string StarDustNativeTest::read_expected_result_from_file(const char* filename)

@@ -1,7 +1,6 @@
-#include "pch.h"
 #include "CppUnitTest.h"
 
-#include "SDEmitter.h"
+#include "ModuleEmitter.h"
 #include "TestUtilities.h"
 #include "Opcodes.h"
 
@@ -15,10 +14,10 @@ namespace StarDustNativeTest
 	{
 	public:
 		
-		static void assert_result(sde::SDEmitter* emitter, std::string testName)
+		static void assert_result(sde::ModuleEmitter* emitter, std::string testName)
 		{
 			std::stringstream ss;
-			emitter->generate(&ss);
+			emitter->write(&ss);
 
 			std::string output = ss.str();
 			trim(output);
@@ -36,11 +35,9 @@ namespace StarDustNativeTest
 		{
 			std::string moduleNameTest = "TEST";
 			std::string methodNameTest = "Main";
-			sde::SDEmitter emitter(moduleNameTest.c_str(), moduleNameTest.length());
-
-			sde::MethodEmitter* method = emitter.emit_method(methodNameTest.c_str(), methodNameTest.length());
-
-			Assert::IsTrue(emitter.number_of_methods() == 1);
+			sde::ModuleEmitter emitter(moduleNameTest.c_str(), moduleNameTest.length());		
+			sde::MethodEmitter* method = emitter.add_method(methodNameTest.c_str());			
+			Assert::IsTrue(emitter.method_count() == 1);
 			VALIDATE_EMITTER();
 		}
 
@@ -48,20 +45,21 @@ namespace StarDustNativeTest
 		{
 			std::string moduleNameTest = "TEST";
 			std::string methodNameTest = "Main";
-			sde::SDEmitter emitter(moduleNameTest.c_str(), moduleNameTest.length());
-
-			sde::MethodEmitter* method = emitter.emit_method(methodNameTest.c_str(), methodNameTest.length());
-
-			Assert::IsTrue(emitter.number_of_methods() == 1);
-
-			std::vector<std::string> args;
+			sde::ModuleEmitter emitter(moduleNameTest.c_str(), moduleNameTest.length());
+			
+			sde::MethodEmitter* method = emitter.add_method(methodNameTest.c_str());
+			
+			Assert::IsTrue(emitter.method_count() == 1);
+			
+			sde::Arguments args;
 			args.push_back("3");
-			method->append_opcode(sde::Opcode::LoadConstantI32, &args);
-			args[0] = "2";
-			method->append_opcode(sde::Opcode::LoadConstantI32, &args);
-			method->append_opcode(sde::Opcode::Add, nullptr);
-			method->append_opcode(sde::Opcode::Return, nullptr);
-
+			method->add_opcode(sde::Opcode::LoadConstantI32, args);
+			
+			args.set_at(0, "2");
+			method->add_opcode(sde::Opcode::LoadConstantI32, args);
+			method->add_opcode(sde::Opcode::Add);
+			method->add_opcode(sde::Opcode::Return);
+			
 			VALIDATE_EMITTER();
 		}
 	};

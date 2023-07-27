@@ -2,6 +2,8 @@
 #ifndef _SDVM_RETURNINSTRUCTION_H_
 #define _SDVM_RETURNINSTRUCTION_H_
 
+#include <map>
+#include "DllWrappers.h"
 
 namespace sdi
 {

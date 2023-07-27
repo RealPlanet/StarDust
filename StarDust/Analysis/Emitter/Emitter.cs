@@ -10,12 +10,12 @@ namespace StarDust.Code.Emit
     internal sealed class Emitter
     {
         private readonly ReportBag Report = new();
-        private SDEmitterW _InternalEmitter;
-        private Dictionary<FunctionSymbol, MethodEmitterW> _Methods = new();
+        private ModuleEmitter _InternalEmitter;
+        private Dictionary<FunctionSymbol, MethodEmitter> _Methods = new();
 
         private Emitter(string moduleName)
         {
-            _InternalEmitter = new SDEmitterW(moduleName);
+            _InternalEmitter = new ModuleEmitter(moduleName);
 
             #region Reference lookup
 
@@ -132,7 +132,7 @@ namespace StarDust.Code.Emit
 
         private void EmitFunctionDeclaration(FunctionSymbol function)
         {
-            var methodEmitter = _InternalEmitter.EmitMethod(function.Name);
+            var methodEmitter = _InternalEmitter.AddMethod(function.Name);
 
             //TypeReference? type = KnownTypes[function.ReturnType];
             //MethodDefinition method = new(function.Name, MethodAttributes.Static | MethodAttributes.Private, type);
@@ -155,7 +155,7 @@ namespace StarDust.Code.Emit
 
         private void EmitFunctionBody(FunctionSymbol function, AbstractBlockStatement body)
         {
-            MethodEmitterW? method = _Methods[function];
+            MethodEmitter? method = _Methods[function];
 
             Locals.Clear();
             LabelReferences.Clear();
@@ -184,7 +184,7 @@ namespace StarDust.Code.Emit
             //}
         }
         //
-        private void EmitStatement(MethodEmitterW ilProcessor, AbstractStatement node)
+        private void EmitStatement(MethodEmitter ilProcessor, AbstractStatement node)
         {
             switch (node.NodeType)
             {

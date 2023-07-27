@@ -29,7 +29,7 @@ namespace sdi
 		void update();
 		void exit(StackValue exitValue);
 
-		ExecutionStack& get_execution_stack() { return theExecutionStack; }
+		ExecutionStack* get_execution_stack() { return &theExecutionStack; }
 		const StackValue& get_exit_value() const { _SDVM_THROW_IF(!theExitValue.is_valid()); return theExitValue; }
 
 	public:

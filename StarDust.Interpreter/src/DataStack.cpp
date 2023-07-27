@@ -2,24 +2,39 @@
 
 namespace sdi
 {
-	StackValue::~StackValue()
-	{
-		if (is_string())
+	void StackValue::copy_memory_if_needed(const StackValue* from, StackValue* to) {
+		assert(from != nullptr);
+		assert(to != nullptr);
+
+		if (from->is_string())
 		{
-			delete[] value.s;
+			to->tag = from->tag;
+			const char* src = from->value.s;
+			to->value = to->create_value(src, (int)strlen(src));
 		}
 	}
 
-	StackValue::StackValue(const StackValue& o)
+	StackValue& StackValue::operator=(const StackValue& o)
 	{
-		this->value = o.value;
-		this->tag = o.tag;
+		value = o.value;
+		tag = o.tag;
 
-		if (this->tag == StackDataType::String)
-		{
-			// Copy string data
-			size_t len = strlen(this->value.s);
-			this->value = create_value(this->value.s, (int)len);
+		copy_memory_if_needed(&o, this);
+		return *this;
+	}
+
+	StackValue::StackValue(const StackValue& other)
+	{
+		this->value = other.value;
+		this->tag = other.tag;
+
+		copy_memory_if_needed(&other, this);
+	}
+
+	StackValue::~StackValue()
+	{
+		if (is_string()) {
+			delete[] value.s;
 		}
 	}
 
@@ -27,19 +42,27 @@ namespace sdi
 	{
 		this->value = o.value;
 		this->tag = o.tag;
+		copy_memory_if_needed(&o, this);
 
+		o.value = {0};
 		o.tag = StackDataType::Err;
 	}
 
 	Value StackValue::create_value(const char* str, int len)
 	{
-		char* cstr = new char[len];
-		strcpy_s(cstr, len, str);
+		// Assert len, ensure length is correct!
+		assert(strnlen_s(str, len + 1) == len);
 
-		Value v;
+		size_t sizeWithTerminator = static_cast<size_t>(len) + 1;
+		char* cstr = new char[sizeWithTerminator] {0};
+		memset(cstr, 0, sizeWithTerminator);
+		strcpy_s(cstr, sizeWithTerminator, str);
+
+		Value v{};
 		v.s = cstr;
 		return v;
 	}
+
 #pragma region
 	StackValue operator+(const StackValue& f, const StackValue& s)
 	{

@@ -1,14 +1,14 @@
-#include "pch.h"
 #include "CppUnitTest.h"
 
-#include "SDEmitter.h"
 #include "TestUtilities.h"
 #include "Opcodes.h"
 #include "RuntimeInstructionBinder.h"
 #include "ExecutionScope.h"
 #include "Logger.h"
+
 #include <VirtualMachine.h>
 #include <BytecodeParser.h>
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace StarDustNativeTest

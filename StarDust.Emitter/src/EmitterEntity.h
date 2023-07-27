@@ -4,6 +4,7 @@
 #define _SDVM_EMITTER_ENTITY_H_
 
 #include "SDShared.h"
+#include <sstream>
 #include <string>
 
 namespace sde

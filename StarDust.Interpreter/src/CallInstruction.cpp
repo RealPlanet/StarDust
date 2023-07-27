@@ -47,12 +47,12 @@ namespace sdi
 		Routine* pRoutine = scope->get_routine();
 		if (m_bIsFakeThread)
 		{
-			pRoutine->parent_machine()->routine_map().new_routine(theFunctionToCall, &scope->get_data_stack());
+			pRoutine->parent_machine()->routine_map().new_routine(theFunctionToCall, scope->get_data_stack());
 			return 0;
 		}
 
-		ExecutionStack& stack = pRoutine->get_execution_stack();
-		stack.push(ExecutionScope::create(pRoutine, &scope->get_data_stack(), theFunctionToCall));
+		ExecutionStack* stack = pRoutine->get_execution_stack();
+		stack->push(ExecutionScope::create(pRoutine, scope->get_data_stack(), theFunctionToCall));
 		return 0;
 	}
 }

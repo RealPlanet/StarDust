@@ -9,8 +9,8 @@ namespace StarDust {
 	namespace Interpreter {
 		void ManagedPrintToConsole(sdi::ExecutionScope* scope)
 		{
-			sdi::DataStack& stack = scope->get_data_stack();
-			sdi::StackValue value = stack.pop();
+			sdi::DataStack* stack = scope->get_data_stack();
+			sdi::StackValue value = stack->pop();
 			System::Console::WriteLine(value.as_int32());
 		}
 

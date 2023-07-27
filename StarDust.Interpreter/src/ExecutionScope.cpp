@@ -18,8 +18,7 @@ namespace sdi
 				throw std::runtime_error("Unexpected argument type!");
 
 			StackValue data = {};
-			data.tag = def;
-			data.value = argumentsSource->pop().value;
+			argumentsSource->pop_into(data);
 			theArguments.push_back(data);
 		}
 	}

@@ -18,9 +18,9 @@ namespace sdi
 
 	int LoadArgVariant::execute(ExecutionScope* scope)
 	{
-		DataStack& stack = scope->get_data_stack();
+		DataStack* stack = scope->get_data_stack();
 		StackValue& value = scope->get_arguments().at(theArgIndex);
-		stack.push(value);
+		stack->push(value);
 		return 0;
 	}
 
@@ -37,7 +37,8 @@ namespace sdi
 
 	int StoreArgVariant::execute(ExecutionScope* scope)
 	{
-		StackValue val = scope->get_data_stack().pop();
+		StackValue val;
+		scope->get_data_stack()->pop_into(val);
 		std::vector<StackValue>& v = scope->get_arguments();
 		v.emplace(v.begin() + theArgIndex, val);
 		return 0;

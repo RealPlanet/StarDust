@@ -3,6 +3,7 @@
 #ifndef _SDVM_VIRTUAL_MACHINE_H_
 #define _SDVM_VIRTUAL_MACHINE_H_
 
+#include "DllWrappers.h"
 #include "MachineDiagnostics.h"
 #include "Routine.h"
 #include "VirtualMemory.h"

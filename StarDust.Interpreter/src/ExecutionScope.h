@@ -36,7 +36,7 @@ namespace sdi
 	public:
 		void set_label_number(size_t target) { theCurrentLabel = target; }
 		void update();
-		DataStack&					get_data_stack()	{ return theDataStack; }
+		DataStack*					get_data_stack()	{ return &theDataStack; }
 		Routine*					get_routine()		{ return theParentRoutine; }
 
 		std::vector<StackValue>&	get_locals()		{ return theLocalVariables; }
